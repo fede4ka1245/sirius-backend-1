@@ -1,9 +1,9 @@
 import Sequelize from 'sequelize';
 import { getDatabase } from './getDatabase.js';
 
-const sequelize = getDatabase();
+const database = getDatabase();
 
-export const Rot = sequelize.define('rot', {
+export const Rot = database.define('rot', {
   id: {
     type: Sequelize.INTEGER,
     autoIncrement: true,

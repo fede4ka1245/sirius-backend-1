@@ -12,10 +12,10 @@ const port = process.env.PORT || 3000;
 
 app.use(express.json());
 
-const sequelize = getDatabase();
+const database = getDatabase();
 
 const main = async () => {
-  await sequelize.sync();
+  await database.sync();
 
   app.post('/encode', async (request, response) => {
     const { message, rot } = request.body;
