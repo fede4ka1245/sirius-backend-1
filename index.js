@@ -18,41 +18,64 @@ const main = async () => {
   await database.sync();
 
   app.post('/encode', async (request, response) => {
-    const { message, rot } = request.body;
-    const savedRot = await Rot.findOne({ where: { rot } });
+    try {
+      const { message, rot } = request.body;
 
-    if (savedRot) {
-      await Rot.update({
-        rot,
-        usage: savedRot.usage + 1,
-      }, {
-        where: {
+      if (!message || !rot) {
+        response.status(500).send('internal server error');
+        return;
+      }
+
+      const savedRot = await Rot.findOne({ where: { rot } });
+
+      if (savedRot) {
+        await Rot.update({
           rot,
-        },
-      });
-    } else {
-      await Rot.create({
-        rot,
-        usage: 1,
-      });
-    }
+          usage: savedRot.usage + 1,
+        }, {
+          where: {
+            rot,
+          },
+        });
+      } else {
+        await Rot.create({
+          rot,
+          usage: 1,
+        });
+      }
 
-    response.status(200).json({
-      message: encodeMessage(message, rot),
-    });
+      response.status(200).json({
+        message: encodeMessage(message, rot),
+      });
+    } catch {
+      response.status(500).send('internal server error');
+    }
   });
 
   app.get('/decode', (request, response) => {
-    const { message, rot } = request.query;
+    try {
+      const { message, rot } = request.query;
 
-    response.status(200).json({
-      message: decodeMessage(message, rot),
-    });
+      if (!message || !rot) {
+        response.status(500).send('internal server error');
+        return;
+      }
+
+      response.status(200).json({
+        message: decodeMessage(message, rot),
+      });
+    } catch {
+      response.status(500).send('internal server error');
+    }
   });
 
   app.get('/stats', async (request, response) => {
-    const rots = await Rot.findAll({ raw: true });
-    response.status(200).json(rots);
+    try {
+      const rots = await Rot.findAll({ raw: true });
+      response.status(200).json(rots);
+    } catch {
+      response.status(500).send('internal server error');
+    }
   });
 
   app.listen(port, () => {
