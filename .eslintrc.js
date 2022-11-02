@@ -11,5 +11,9 @@ module.exports = {
     sourceType: 'module',
   },
   rules: {
+    'no-plusplus': 1,
+    'import/prefer-default-export': 0,
+    'no-continue': 0,
+    'import/extensions': 0,
   },
 };
